@@ -1,0 +1,68 @@
+@media (max-width: 768px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .item-card .inner {
+    padding: 1rem !important;
+  }
+
+  .item-card .stats-text-wrap .fs-3 {
+    font-size: 1.5rem !important;
+  }
+
+  .contact-card {
+    margin-bottom: 1rem;
+  }
+
+  .contact-card .profile-img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .favorites-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .contact-footer {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .contact-footer .d-flex {
+    gap: 0.25rem !important;
+  }
+
+  .profile-photo {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 576px) {
+  .icon-box {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .stats-text-wrap .fs-3 {
+    font-size: 1.25rem !important;
+  }
+
+  .text-font {
+    font-size: 0.7rem !important;
+  }
+
+  .action-label {
+    padding: 0.25rem !important;
+  }
+
+  .action-label i {
+    font-size: 0.875rem;
+  }
+}
