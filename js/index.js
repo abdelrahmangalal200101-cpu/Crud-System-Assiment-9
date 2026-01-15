@@ -248,7 +248,9 @@ function displayuser(list) {
               <button type="button" class="action-label">
                 <i class="fas fa-pencil-alt pen" onclick="setUpFormToUpdate(${i})"></i>
               </button>
-              <button type="button" class="action-label" onclick="deleteUser(${i})">
+              <button type="button" class="action-label" onclick="deleteUser('${
+                user.Phone
+              }')">
                 <i class="fas fa-trash trash"></i>
               </button>
             </div>
@@ -290,6 +292,22 @@ function setUpFormToUpdate(index) {
 }
 
 function Updateuser() {
+  var newPhone = phoneuser.value;
+
+  var isDuplicate = uList.some(
+    (u, i) => u.Phone === newPhone && i !== GlobalIndex
+  );
+
+  if (isDuplicate) {
+    Swal.fire({
+      title: "Duplicate Phone!",
+      html: "<small>This phone number already exists</small>",
+      icon: "warning",
+      showConfirmButton: true,
+    });
+    return;
+  }
+
   var user = uList[GlobalIndex];
   user.Picture = Picuser.dataset.img || "";
   user.Name = username.value;
@@ -335,10 +353,31 @@ function Updateuser() {
   clearinput();
 }
 
-function deleteUser(index) {
-  var user = uList[index];
-  var userName = user.Name;
-  var userPhone = user.Phone;
+function resetModalState() {
+  GlobalIndex = null;
+
+  addbtn.classList.remove("d-none");
+  updbtn.classList.add("d-none");
+
+  clearinput();
+
+  username.classList.remove("is-valid", "is-invalid");
+  phoneuser.classList.remove("is-valid", "is-invalid");
+  Emailuser.classList.remove("is-valid", "is-invalid");
+}
+
+var cancelmodal = document.getElementById("addContactModal");
+
+cancelmodal.addEventListener("hidden.bs.modal", function () {
+  resetModalState();
+});
+
+
+function deleteUser(phone) {
+  var userIndex = uList.findIndex((u) => u.Phone === phone);
+  if (userIndex === -1) return;
+
+  var userName = uList[userIndex].Name;
 
   Swal.fire({
     title: "Delete Contact?",
@@ -349,34 +388,25 @@ function deleteUser(index) {
     cancelButtonText: "Cancel",
   }).then((result) => {
     if (result.isConfirmed) {
-      uList.splice(index, 1);
+      uList.splice(userIndex, 1);
       localStorage.setItem("data", JSON.stringify(uList));
-      displayuser(uList);
-      updateTotal();
 
-      for (var i = favlist.length - 1; i >= 0; i--) {
-        if (favlist[i].Phone === userPhone) {
-          favlist.splice(i, 1);
-        }
-      }
-
-      for (var i = emerglist.length - 1; i >= 0; i--) {
-        if (emerglist[i].Phone === userPhone) {
-          emerglist.splice(i, 1);
-        }
-      }
+      favlist = favlist.filter((u) => u.Phone !== phone);
+      emerglist = emerglist.filter((u) => u.Phone !== phone);
 
       localStorage.setItem("favlist", JSON.stringify(favlist));
       localStorage.setItem("emerglist", JSON.stringify(emerglist));
 
+      displayuser(uList);
       displayFavorites(favlist);
-      updatefav();
       displayEmergency(emerglist);
+
+      updateTotal();
+      updatefav();
       updateEmer();
 
       Swal.fire({
         title: "Deleted!",
-        html: `<small><b>${userName}</b> has been removed successfully.</small>`,
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
@@ -543,7 +573,6 @@ function phoneinputvalidation() {
     phoneuser.classList.remove("is-valid");
     phoneuser.classList.add("is-invalid");
   }
-
 }
 
 function emailinputvalidation() {
